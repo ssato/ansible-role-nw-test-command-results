@@ -1,0 +1,2 @@
+tests/hosts.yml
+tests/ref/*.out

@@ -1,0 +1,77 @@
+---
+# .. note:: rntcr is an abbreviation of 'role-nw-test-command-results'
+#
+# Mode = 'dump' | 'dryrun' | * 
+# - dump: Dump mode to save reference data
+# - dryrun: Test (dryrun) mode
+# - normal or *: Normal mode to run commands and tests
+rntcr_mode: normal
+
+# Default:
+# - rntcr_dump_path_prefix: see below
+# - rntcr_dump_path: {{ dump_path_prefix }}< timestamp >.json.
+rntcr_dump_path_prefix: >-
+  files/{{ inventory_hostname }}_
+
+# The command to run on target nodes to find target objects
+#
+# Examples:
+#
+# # Cisco (ios): list interfaces
+# rntcr_command: show ip interface brief | inc [0-9]+
+#
+# # Juniper (junos): list interfaces
+# rntcr_command: show interfaces terse
+#
+rntcr_command: ''
+
+# If true, it fails immediately if running `rntcr_command` fails.
+rntcr_ignore_errors: false
+
+# placeholder to save results
+rntcr_res: {}
+
+# Examples:
+#
+# rntcr_conds:
+#   # Test if the interface found, up and configured to given ip address.
+#   - rntcr_res.stdout[0] is regex('^Loopback0.*192.168.2.102.*up.*up')
+#
+#   # Test if the interface I/O error counts == 0
+#   - >-
+#     {{ rntcr_res.stdout[0] |
+#        map('regex_search', ".*[0-9]+ (input|output) errors, ") |
+#        select |
+#        map('regex_replace', ".*([0-9]+) (input|output) errors,.*", '\1') |
+#        map('int') |
+#        select('greaterthan', 0) |
+#        list | length == 0 }}
+#
+rntcr_conds:
+  - true
+
+# Ansible module specific options:
+# ios_command:
+ios_command:
+  interval: 1
+  match: all
+  retries: 10
+  wait_for: []
+
+# iosxr_command:
+iosxr_command:
+  interval: 1
+  match: all
+  retries: 10
+  wait_for: []
+
+# junos:
+junos_command:
+  display: >-
+    {{ 'xml' if ansible_connection == 'netconf' else 'text' }}
+  interval: 1
+  match: all
+  retries: 10
+  wait_for: []
+
+# vim:sw=2:ts=2:et:

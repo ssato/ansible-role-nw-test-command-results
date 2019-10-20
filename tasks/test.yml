@@ -1,0 +1,10 @@
+---
+- name: >-
+    Test if results with conditionals
+  assert:
+    that: "{{ rntcr_conds }}"
+    fail_msg: |
+      conds: {{ rntcr_conds | to_nice_json }}
+      rntcr_res: {{ rntcr_res | to_nice_json }}
+
+# vim:sw=2:ts=2:et:

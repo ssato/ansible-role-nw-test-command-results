@@ -1,0 +1,42 @@
+---
+- name: Test targets are network nodes
+  assert:
+    that:
+      - ansible_network_os | d()
+
+- name: Test commands are set when mode is not dryrun
+  assert:
+    that:
+      - rntcr_command | d()
+      - rntcr_command is string
+    fail_msg: |
+      rntcr_command: {{ rntcr_command | d('undef') }}
+  when:
+    - rntcr_mode != 'dryrun'
+
+- name: Test conditionals are set when mode is not dump
+  assert:
+    that:
+      - rntcr_conds | d()
+      - rntcr_conds is sequence
+      - rntcr_conds | length > 0
+    fail_msg: |
+      rntcr_targets_patterns: {{ rntcr_targets_patterns | d('undef') }}
+  when:
+    - rntcr_mode != 'dump'
+
+- name: Test variables are OK
+  assert:
+    that:
+      - rntcr_mode | d()
+      - rntcr_mode is string
+      - rntcr_dump_path_prefix | d()
+      - rntcr_dump_path_prefix is string
+      - rntcr_ignore_errors is defined
+      - rntcr_ignore_errors is in [true, false]
+    fail_msg: |
+      rntcr_mode: {{ rntcr_mode | d('undef') }}
+      rntcr_dump_path_prefix: {{ rntcr_dump_path_prefix | d('undef') }}
+      rntcr_ignore_errors: {{ rntcr_ignore_errors | d('undef') }}
+
+# vim:sw=2:ts=2:et:
